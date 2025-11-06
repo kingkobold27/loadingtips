@@ -81,8 +81,7 @@ with open(pid_file, "w") as f:
 # Function to toggle overlay
 # -------------------------------
 def toggle_overlay():
-    root.withdraw()  # hide overlay
-    os.system("clear")  # clear terminal while hidden
+    root.withdraw()  # hide overlay (terminal accessible)
     # Re-show after 10 seconds
     root.after(10000, lambda: root.deiconify())
     # Schedule next hide in 20 seconds (10 visible + 10 hidden)
