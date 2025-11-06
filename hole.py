@@ -4,9 +4,7 @@ import signal
 import subprocess
 import tkinter as tk
 
-# -------------------------------
 # Ensure tkinter is installed via apt
-# -------------------------------
 try:
     import tkinter as tk
 except ImportError:
@@ -20,16 +18,13 @@ except ImportError:
         print("sudo apt install python3-tk")
         exit(1)
 
-# -------------------------------
 # Files to track command count and overlay PID
-# -------------------------------
 count_file = os.path.expanduser("~/.dottracker_count")
 pid_file = os.path.expanduser("~/.dottracker_overlay_pid")
 os.makedirs(os.path.dirname(count_file), exist_ok=True)
 
-# -------------------------------
+
 # Kill previous overlay if exists
-# -------------------------------
 if os.path.exists(pid_file):
     try:
         with open(pid_file, "r") as f:
@@ -38,9 +33,7 @@ if os.path.exists(pid_file):
     except:
         pass
 
-# -------------------------------
 # Update command count
-# -------------------------------
 if os.path.exists(count_file):
     with open(count_file, "r") as f:
         count = int(f.read().strip())
@@ -50,14 +43,10 @@ count += 1
 with open(count_file, "w") as f:
     f.write(str(count))
 
-# -------------------------------
 # Calculate dot size
-# -------------------------------
 radius = 10 + int(count ** 0.5 * 5)
 
-# -------------------------------
 # Fullscreen overlay setup
-# -------------------------------
 root = tk.Tk()
 root.attributes("-fullscreen", True)
 root.attributes("-topmost", True)
@@ -77,9 +66,7 @@ canvas.create_oval(x-radius, y-radius, x+radius, y+radius, fill="black")
 with open(pid_file, "w") as f:
     f.write(str(os.getpid()))
 
-# -------------------------------
 # Function to toggle overlay
-# -------------------------------
 def toggle_overlay():
     root.withdraw()  # hide overlay (terminal accessible)
     # Re-show after 10 seconds
