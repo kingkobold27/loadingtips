@@ -130,6 +130,7 @@ def launch_overlay():
             proc.terminate()
         time.sleep(1)
 
+
 def run_overlay():
     import tkinter as tk
 
@@ -215,3 +216,10 @@ def run_overlay():
 
     root.protocol("WM_DELETE_WINDOW", on_close)
     root.mainloop()
+
+
+if __name__ == "__main__":
+    if "--child" in sys.argv:
+        run_overlay()
+    else:
+        launch_overlay()
