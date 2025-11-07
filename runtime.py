@@ -169,40 +169,33 @@ def run_overlay():
     text_color = "#7CFC00"
     font_weight = "bold"
 
-    def create_wrapped_text(text):
-        max_width = screen_width - 100
-        max_height = screen_height - 100
-        font_size = 50
+    # Create text item once
+    initial_word = random.choice(FUN_FACTS)
+    text_item = canvas.create_text(
+        x, y,
+        text=initial_word,
+        fill=text_color,
+        font=(font_name, 50, font_weight),
+        width=screen_width - 100,
+        justify="center"
+    )
 
-        text_item = canvas.create_text(
-            x, y,
-            text=text,
-            fill=text_color,
-            font=(font_name, font_size, font_weight),
-            width=max_width,
-            justify="center"
-        )
-
+    # Auto-scale initial font
+    bbox = canvas.bbox(text_item)
+    font_size = 50
+    while bbox[3] - bbox[1] > screen_height - 100 and font_size > 10:
+        font_size -= 2
+        canvas.itemconfig(text_item, font=(font_name, font_size, font_weight))
         bbox = canvas.bbox(text_item)
-        while bbox[3] - bbox[1] > max_height and font_size > 10:
-            font_size -= 2
-            canvas.itemconfig(text_item, font=(font_name, font_size, font_weight))
-            bbox = canvas.bbox(text_item)
 
-        return text_item
-
-    current_word = random.choice(FUN_FACTS)
-    text_item = create_wrapped_text(current_word)
-
-    # Save PID to prevent multiple overlays
+    # Save PID
     with open(PID_FILE, "w") as f:
         f.write(str(os.getpid()))
 
     def toggle_overlay():
-        root.withdraw()
         new_word = random.choice(FUN_FACTS)
-        canvas.itemconfig(text_item, text=new_word)
-        create_wrapped_text(new_word)
+        canvas.itemconfig(text_item, text=new_word)  # update same text item
+        root.withdraw()
         root.after(20000, lambda: (root.deiconify(), root.after(20000, toggle_overlay)))
 
     root.after(20000, toggle_overlay)
@@ -215,6 +208,7 @@ def run_overlay():
 
     root.protocol("WM_DELETE_WINDOW", on_close)
     root.mainloop()
+
 
 if __name__ == "__main__":
     if "--child" in sys.argv:
