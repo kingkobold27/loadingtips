@@ -3,20 +3,20 @@ import os
 import signal
 import subprocess
 import sys
-import time
 import random
 import tkinter as tk
 from tkinter import font as tkfont
 
 # CONFIGURATION
+
 SCRIPT_PATH = os.path.abspath(__file__)
 PID_FILE = os.path.expanduser("~/.search_cmd")
 
-# Duration to fade in/out (in seconds)
-FADE_DURATION = 2.0
+# Duration to fade in/out (seconds each)
+FADE_DURATION = 1.5
 
-# Time each fact stays visible (in milliseconds)
-FACT_INTERVAL = 20000
+# Total time each fact stays visible (milliseconds, including fades)
+FACT_INTERVAL = 15000
 
 # FUN FACTS
 FUN_FACTS = [
@@ -75,6 +75,7 @@ FUN_FACTS = [
 ]
 
 # CORE LOGIC
+
 def get_font_name():
     """Return Comic Sans if available, else DejaVu Sans."""
     try:
@@ -168,7 +169,9 @@ def run_overlay():
             root.attributes("-alpha", min(alpha + step, 1))
             root.after(int(FADE_DURATION * 50 * step), lambda: fade_in(step))
         else:
-            root.after(FACT_INTERVAL, fade_out)
+            # Schedule next fade out to keep total interval 15 seconds
+            visible_time = FACT_INTERVAL - int(FADE_DURATION * 2000)  # subtract both fades
+            root.after(max(visible_time, 0), fade_out)
 
     def update_fact():
         """Change fun fact and start fade in."""
